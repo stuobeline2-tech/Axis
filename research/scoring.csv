@@ -1,0 +1,24 @@
+id,candidate,urgency,ability_to_pay,ease_of_finding_buyers,same_day_close_prob,avg_txn_value,margin,automation,fulfilment_simplicity,competition_inv,acquisition_cost_inv,repeatability,recurring_potential,shariah_certainty,weighted_score,gate_status,gate_note
+c01,"Denial recovery / A-R sprint, US independent practices",7,9,8,3,7,9,8,6,5,7,8,7,8,6.8,eligible,
+c08,UK public sector WCAG 2.2 accessibility audit,7,8,9,1,7,9,8,7,6,7,8,7,9,6.4,eligible,
+c13,UK SME invoice chasing / A-R recovery,8,6,7,4,5,8,7,5,5,6,7,8,5,6.2,EXCLUDED,EXCLUDED: shariah 5 - statutory interest
+c07,Data quality remediation / migration cleanup,6,7,5,4,6,9,8,7,5,4,7,6,9,6.1,eligible,
+c03,"Unsold-estimate reactivation, US contractors",6,7,7,3,6,8,7,5,4,5,7,8,8,5.95,eligible,
+c12,Bookkeeping catch-up / QuickBooks cleanup,8,6,6,5,5,7,4,4,4,6,7,8,8,5.9,eligible,
+c16,Google Business Profile audit / local SEO,5,5,9,5,4,8,6,6,2,7,8,8,8,5.9,eligible,
+c23,B2B lead list building / enrichment as a service,5,6,6,4,5,9,8,7,3,5,8,7,6,5.9,EXCLUDED,EXCLUDED: shariah 6 - third-party data rights / harm surface
+c11,Autonomous SEO content engine as a service,4,6,6,2,7,9,9,8,3,5,8,9,7,5.8,EXCLUDED,GATED: shariah 7 - truthfulness of AI-authored claims
+c02,Offshore virtual medical admin / biller placement,7,8,8,2,8,6,3,3,4,6,6,9,8,5.75,eligible,
+c17,Ecommerce product data cleanup / enrichment,5,6,5,3,5,9,9,8,4,4,8,7,9,5.75,eligible,
+c15,Cold email infrastructure & deliverability audit,5,6,6,4,5,8,7,6,4,6,7,8,8,5.7,eligible,
+c09,CQC compliance documentation / mock inspection,8,6,6,2,7,8,5,4,5,5,6,7,8,5.55,eligible,
+c04,Excel / VBA automation for SMEs,6,4,6,7,2,8,5,8,3,6,6,3,9,5.45,eligible,
+c06,SC-cleared data analyst contracting,5,9,7,1,10,10,1,8,5,7,3,6,9,5.45,eligible,
+c05,Power BI dashboard build,5,8,6,2,7,9,3,6,4,5,5,6,9,5.25,eligible,
+c18,AI automation agency (n8n / Make),5,7,5,2,8,8,5,4,2,4,5,8,8,5.25,eligible,
+c14,UK bid / tender writing for SMEs,6,7,5,2,8,8,4,3,4,4,5,5,7,5.1,EXCLUDED,GATED: shariah 7 - claim veracity on behalf of client
+c19,B2B SEO content retainer,3,6,5,1,7,8,8,7,2,4,7,9,8,5.1,eligible,
+c20,Data annotation platforms (Outlier/Surge/Appen),3,8,8,6,1,7,1,7,4,8,8,3,9,5.1,EXCLUDED,EXCLUDED: 2.4 platform terms prohibit AI/automation
+c22,Open freelance marketplaces (Upwork/Fiverr),4,4,7,6,3,7,3,6,2,7,7,4,8,4.9,eligible,
+c10,Sacred Resins frankincense & myrrh export,4,7,4,3,8,5,2,2,4,3,6,6,9,4.6,eligible,
+c21,Transcription platforms (Rev/Verbit/3Play),2,3,7,8,1,4,2,7,3,8,8,2,9,4.4,eligible,
