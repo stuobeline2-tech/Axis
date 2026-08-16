@@ -1,0 +1,14 @@
+# Live pipeline data — contains real prospect contact details. Never commit.
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# Filled-in client delivery data (real customer PII from client exports).
+delivery/clients/
+*-filled.csv
+
+node_modules/
+.env
+.env.*
+.DS_Store

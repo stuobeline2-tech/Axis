@@ -1,0 +1,7 @@
+customer_name,phone,email,estimate_date,estimate_amount,job_type,touch_1_sent,touch_2_sent,touch_3_sent,touch_4_sent,touch_5_sent,first_reply_date,outcome,job_closed,closed_amount,client_confirmed,notes
+# One row per contact from the client's unsold-estimate export.
+# outcome: booked | interested_later | price_objection | already_done | no | opt_out | no_reply
+# job_closed: yes | no   -- only 'yes' when the CLIENT confirms it closed
+# client_confirmed: yes | no -- set at close-out review, in front of the client. This column is the
+#   entire basis of the renewal conversation. Never mark it yes on your own judgement.
+# closed_amount: the real invoiced figure, not the original estimate.

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unsold Estimate Recovery — Calculator</title>
+<style>
+  /* ---- tokens: light is the base, dark overrides only colors ---- */
+  :root{
+    --bg:#f6f7f9; --panel:#ffffff; --ink:#12161c; --muted:#5c6672;
+    --line:#e2e6ea; --accent:#0f6b4f; --accent-soft:#e6f2ed;
+    --warn:#8a5a00; --warn-soft:#fdf4e3;
+    --shadow:0 1px 2px rgba(16,24,32,.06),0 8px 24px rgba(16,24,32,.06);
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --bg:#0e1116; --panel:#161b22; --ink:#e8edf3; --muted:#9aa6b2;
+      --line:#252c36; --accent:#4ade9f; --accent-soft:#12241d;
+      --warn:#e5b567; --warn-soft:#241d10;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0e1116; --panel:#161b22; --ink:#e8edf3; --muted:#9aa6b2;
+    --line:#252c36; --accent:#4ade9f; --accent-soft:#12241d;
+    --warn:#e5b567; --warn-soft:#241d10;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px rgba(0,0,0,.3);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.55 ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 20px 64px}
+
+  header{margin-bottom:28px}
+  h1{font-size:clamp(22px,3.2vw,30px);margin:0 0 6px;letter-spacing:-.02em}
+  .sub{color:var(--muted);margin:0;font-size:15px}
+
+  .grid{display:grid;grid-template-columns:minmax(280px,360px) 1fr;gap:20px;align-items:start}
+  @media(max-width:820px){.grid{grid-template-columns:1fr}}
+
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow)}
+  .card h2{font-size:13px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin:0 0 16px;font-weight:600}
+
+  .field{margin-bottom:18px}
+  .field:last-child{margin-bottom:0}
+  label{display:block;font-size:14px;font-weight:500;margin-bottom:6px}
+  .hint{font-size:12.5px;color:var(--muted);margin-top:5px;line-height:1.4}
+  input[type=number]{
+    width:100%;padding:11px 12px;font-size:16px;font-variant-numeric:tabular-nums;
+    background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:9px;
+  }
+  input[type=number]:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+  input[type=range]{width:100%;accent-color:var(--accent);margin-top:4px}
+
+  /* headline result */
+  .headline{
+    background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);
+    border-radius:12px;padding:22px;margin-bottom:18px;
+  }
+  .headline .lbl{font-size:13px;color:var(--muted);margin-bottom:4px}
+  .big{font-size:clamp(34px,6vw,52px);font-weight:680;letter-spacing:-.03em;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1.05}
+  .headline .note{font-size:13.5px;color:var(--muted);margin-top:8px}
+
+  .fit{border-radius:12px;padding:14px 16px;margin-bottom:18px;font-size:14px;line-height:1.5;border:1px solid}
+  .fit strong{display:block;margin-bottom:3px}
+  .fit.bad{background:var(--warn-soft);border-color:color-mix(in srgb,var(--warn) 35%,transparent);color:var(--ink)}
+  .fit.bad strong{color:var(--warn)}
+  .fit.ok{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 25%,transparent)}
+  .fit.ok strong{color:var(--accent)}
+
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:18px}
+  .stat{background:var(--panel);padding:16px}
+  .stat .k{font-size:12.5px;color:var(--muted);margin-bottom:5px}
+  .stat .v{font-size:22px;font-weight:620;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+  table{width:100%;border-collapse:collapse;font-size:14.5px}
+  th,td{text-align:left;padding:9px 4px;border-bottom:1px solid var(--line)}
+  th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600}
+  td.n{text-align:right;font-variant-numeric:tabular-nums}
+  tr:last-child td{border-bottom:none}
+  tr.total td{font-weight:650;border-top:2px solid var(--line)}
+
+  .assump{background:var(--warn-soft);border:1px solid color-mix(in srgb,var(--warn) 30%,transparent);border-radius:12px;padding:16px 18px;margin-top:18px}
+  .assump h3{margin:0 0 8px;font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--warn)}
+  .assump ul{margin:0;padding-left:18px;font-size:13.5px;color:var(--ink)}
+  .assump li{margin-bottom:5px}
+  .assump li:last-child{margin-bottom:0}
+
+  footer{margin-top:24px;font-size:13px;color:var(--muted);line-height:1.6}
+  .scroll{overflow-x:auto}
+  @media print{body{background:#fff}.card{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>What your unsold estimates are worth</h1>
+  <p class="sub">Every number below is calculated from figures you provide. Nothing here is a projection of our results — it is arithmetic on your own business.</p>
+</header>
+
+<div class="grid">
+
+  <!-- ============ INPUTS ============ -->
+  <div class="card">
+    <h2>Your numbers</h2>
+
+    <div class="field">
+      <label for="sent">Estimates you send per month</label>
+      <input type="number" id="sent" value="40" min="0" step="1">
+      <div class="hint">Quotes, bids, or proposals that go out the door.</div>
+    </div>
+
+    <div class="field">
+      <label for="close">Your close rate — <span id="closeOut">25</span>%</label>
+      <input type="range" id="close" value="25" min="1" max="90" step="1">
+      <div class="hint">Roughly what share of those estimates turn into paid work.</div>
+    </div>
+
+    <div class="field">
+      <label for="ticket">Average job value ($)</label>
+      <input type="number" id="ticket" value="6000" min="0" step="100">
+      <div class="hint">Revenue on a typical closed job, before costs.</div>
+    </div>
+
+    <div class="field">
+      <label for="rec">Recovery rate assumed — <span id="recOut">5</span>%</label>
+      <input type="range" id="rec" value="5" min="1" max="15" step="1">
+      <div class="hint"><strong>The one assumption we make.</strong> The share of your <em>unsold</em> estimates that a
+      structured multi-touch follow-up converts. Default is deliberately conservative. Drag it to whatever
+      you think is believable — the case should still hold at the low end.</div>
+    </div>
+
+    <div class="field">
+      <label for="fee">Our monthly fee ($)</label>
+      <input type="number" id="fee" value="1000" min="0" step="50">
+      <div class="hint">Flat. Agreed in writing before any work starts.</div>
+    </div>
+  </div>
+
+  <!-- ============ RESULTS ============ -->
+  <div>
+    <div class="headline">
+      <div class="lbl">Estimated recoverable revenue, per month</div>
+      <div class="big" id="revOut">$9,000</div>
+      <div class="note">From <strong id="recJobs">1.5</strong> additional closed <span id="jobWord">jobs</span> a month.</div>
+    </div>
+
+    <div id="fitBox" class="fit" hidden>
+      <strong id="fitTitle"></strong>
+      <span id="fitBody"></span>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="k">Estimates going unsold</div><div class="v" id="unsoldOut">30</div></div>
+      <div class="stat"><div class="k">Unsold estimate value, per month</div><div class="v" id="walkOut">$180,000</div></div>
+      <div class="stat"><div class="k">Net gain after our fee</div><div class="v" id="netOut">$8,000</div></div>
+      <div class="stat"><div class="k">Return on fee</div><div class="v" id="roiOut">9.0×</div></div>
+    </div>
+
+    <div class="card">
+      <h2>How that number is built</h2>
+      <div class="scroll">
+      <table>
+        <thead><tr><th>Step</th><th class="n">Value</th></tr></thead>
+        <tbody>
+          <tr><td>Estimates sent per month</td><td class="n" id="r1">40</td></tr>
+          <tr><td>Closed at your current rate</td><td class="n" id="r2">10</td></tr>
+          <tr><td>Left unsold</td><td class="n" id="r3">30</td></tr>
+          <tr><td>Recovered at assumed rate</td><td class="n" id="r4">1.5</td></tr>
+          <tr><td>× your average job value</td><td class="n" id="r5">$6,000</td></tr>
+          <tr class="total"><td>Estimated monthly recovery</td><td class="n" id="r6">$9,000</td></tr>
+          <tr><td>Less monthly fee</td><td class="n" id="r7">−$1,000</td></tr>
+          <tr class="total"><td>Net to you, per month</td><td class="n" id="r8">$8,000</td></tr>
+          <tr class="total"><td>Net over 12 months</td><td class="n" id="r9">$96,000</td></tr>
+        </tbody>
+      </table>
+      </div>
+
+      <div class="assump">
+        <h3>Assumptions &amp; limits — read this part</h3>
+        <ul>
+          <li>The <strong>only</strong> figure not supplied by you is the recovery rate, shown above and adjustable.</li>
+          <li>This is an <strong>estimate, not a guarantee.</strong> Actual results depend on your list quality,
+              how old the estimates are, your pricing, and whether the work is still needed.</li>
+          <li>Revenue shown is <strong>top-line, not profit.</strong> Your own material and labour costs come out of it.</li>
+          <li>We count a job as recovered only when <strong>you confirm it closed</strong> — logged and reviewed with you.</li>
+          <li>Follow-up goes to <strong>your existing estimate contacts</strong>, under your brand, with your approval.
+              We do not cold-contact strangers on your behalf.</li>
+        </ul>
+      </div>
+    </div>
+
+    <footer>
+      Fee is flat and fixed in advance — no percentage of revenue, no interest, no charges contingent on
+      financing products. If a pilot does not produce, we report that plainly.
+    </footer>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+  var $ = function(id){ return document.getElementById(id); };
+  var usd0 = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
+
+  // Round to 1dp but drop a trailing .0 — "1.5 jobs" reads honest, "2.0 jobs" reads fake.
+  function jobs(n){ return (Math.round(n*10)/10).toLocaleString('en-US',{maximumFractionDigits:1}); }
+
+  var ids = ['sent','close','ticket','rec','fee'];
+
+  function calc(){
+    var sent   = Math.max(0, +$('sent').value   || 0);
+    var close  = Math.min(100, Math.max(0, +$('close').value || 0)) / 100;
+    var ticket = Math.max(0, +$('ticket').value || 0);
+    var rec    = Math.max(0, +$('rec').value    || 0) / 100;
+    var fee    = Math.max(0, +$('fee').value    || 0);
+
+    var closed    = sent * close;
+    var unsold    = sent - closed;
+    var recovered = unsold * rec;
+    var revenue   = recovered * ticket;
+    var net       = revenue - fee;
+
+    $('closeOut').textContent = Math.round(close*100);
+    $('recOut').textContent   = Math.round(rec*100);
+
+    $('revOut').textContent    = usd0.format(revenue);
+    $('recJobs').textContent   = jobs(recovered);
+    $('jobWord').textContent   = Math.abs(recovered - 1) < 0.05 ? 'job' : 'jobs';
+
+    $('unsoldOut').textContent = jobs(unsold);
+    $('walkOut').textContent   = usd0.format(unsold * ticket);
+    $('netOut').textContent    = usd0.format(net);
+    // Guard the divide: with no fee there is no ratio to show.
+    $('roiOut').textContent    = fee > 0 ? (revenue/fee).toFixed(1) + '×' : '—';
+
+    $('r1').textContent = jobs(sent);
+    $('r2').textContent = jobs(closed) + '  (' + Math.round(close*100) + '%)';
+    $('r3').textContent = jobs(unsold);
+    $('r4').textContent = jobs(recovered) + '  (' + Math.round(rec*100) + '% of unsold)';
+    $('r5').textContent = usd0.format(ticket);
+    $('r6').textContent = usd0.format(revenue);
+    $('r7').textContent = '−' + usd0.format(fee);
+    $('r8').textContent = usd0.format(net);
+    $('r9').textContent = usd0.format(net * 12);
+
+    // Honest fit test. If the arithmetic doesn't clear the fee by a real margin,
+    // say so rather than let a favourable-looking headline stand on its own.
+    var box = $('fitBox'), title = $('fitTitle'), body = $('fitBody');
+    if (sent === 0 || ticket === 0) {
+      box.hidden = true;
+    } else if (revenue < fee) {
+      box.hidden = false; box.className = 'fit bad';
+      title.textContent = 'On these numbers, this service is not worth buying.';
+      body.textContent = 'The estimated recovery is less than the fee. Either the job value or the '
+        + 'estimate volume is too low for follow-up to pay for itself. We would not take this on.';
+    } else if (revenue < fee * 3) {
+      box.hidden = false; box.className = 'fit bad';
+      title.textContent = 'Marginal — worth a pilot at most.';
+      body.textContent = 'The return is positive but thin enough that a normal bad month wipes it out. '
+        + 'Start with the one-off pilot and only continue if the attribution log justifies it.';
+    } else {
+      box.hidden = false; box.className = 'fit ok';
+      title.textContent = 'The arithmetic clears the fee with room to spare.';
+      body.textContent = 'Recovery covers the fee ' + (revenue/fee).toFixed(1) + ' times over, so the case '
+        + 'survives a recovery rate well below the one assumed.';
+    }
+  }
+
+  ids.forEach(function(id){
+    $(id).addEventListener('input', calc);
+  });
+  calc();
+})();
+</script>
+</body>
+</html>
