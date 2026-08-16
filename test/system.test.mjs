@@ -215,3 +215,33 @@ test('pre-send blocks a deceptive Re: subject prefix', () => {
   const r = gateFixture({ to: 'doc@example.invalid', subject: 'Re: our conversation', body: GOOD_BODY }, { prospect: GOOD_PROSPECT });
   assert.ok(r.problems.some(p => /check 8/.test(p)));
 });
+
+test('a low total caused by undocumented windows is NOT reported as healthy denials', () => {
+  const { claims, ...rest } = ingest(FIXTURE);
+  // no payer windows configured at all -> everything lands in window_unknown
+  const s = summarise(classify(claims, { asOf: '2026-08-16', windows: { default_days: null, payers: {} } }));
+  const md = renderAudit({ practice: 'P', summary: s, decision: sellDecision(s), ingestReport: rest,
+                           asOf: '2026-08-16', preparedBy: 'test' });
+  assert.match(md, /note why it is low/);
+  assert.match(md, /Do not read this as a clean bill of health/);
+  assert.doesNotMatch(md, /reasonably under control/,
+    'must not claim denials are under control when the cause is our own missing config');
+});
+
+test('a genuinely low total IS reported as denials under control', () => {
+  const summary = { total_claims: 3, total_denied_outstanding: 400, confirmed_appealable_dollars: 400,
+    unknown_window_dollars: 0, expired_dollars: 0, not_appealable_dollars: 0, unknown_code_dollars: 0,
+    counts: { appealable: 3, window_unknown: 0, expired: 0, not_appealable: 0, unknown_code: 0 },
+    top_codes: [], worklist: [] };
+  const md = renderAudit({ practice: 'P', summary, decision: sellDecision(summary), ingestReport: { rejected: [] },
+                           asOf: '2026-08-16', preparedBy: 'test' });
+  assert.match(md, /reasonably under control/);
+});
+
+test('singular claim counts read as "1 claim", not "1 claims"', () => {
+  const { claims, ...rest } = ingest(FIXTURE);
+  const s = summarise(classify(claims, { asOf: '2026-08-16', windows: WINDOWS }));
+  const md = renderAudit({ practice: 'P', summary: s, decision: sellDecision(s), ingestReport: rest,
+                           asOf: '2026-08-16', preparedBy: 'test' });
+  assert.doesNotMatch(md, /\b1 claims\b/);
+});

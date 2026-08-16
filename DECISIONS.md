@@ -114,3 +114,16 @@ That is precisely the failure §2.1 is written to prevent, and it would have bee
 skim. `data/prospects.csv` is therefore header-only, `outbox/` holds no artifacts, and Phase 5 is
 `BLOCKED`. A blocked phase is a valid outcome; a fabricated one is a failed run.
 I did not set an N target for Phase 5, because choosing a number I cannot meet would be theatre.
+
+## 2026-08-16T16:05Z — Two client-facing defects found by actually rendering the deliverable
+Running the audit and reading the output caught what the tests had not:
+1. **A false reassurance.** When the sell decision was "do not buy", the audit told the practice
+   "your denials appear to be reasonably under control" — even when the real cause of the low
+   number was that *we* had no documented appeal window for their payers. On the fixture that
+   meant $3,020 of genuinely unassessed claims being reported as a clean bill of health. The copy
+   now distinguishes the two cases and says explicitly "do not read this as a clean bill of
+   health" when the gap is ours. Two tests pin both branches.
+2. Singular counts rendered as "1 claims". Cosmetic, but it ships to a paying customer.
+The general lesson recorded: the refuse-to-sell rule was correct and well tested, but the
+*explanation* attached to it was wrong, and no unit test was ever going to catch that. Read the
+output.
