@@ -1,0 +1,23 @@
+{
+  "_provenance": "Operator-maintained classification of common X12 CARC codes. The code numbers and short meanings below are the widely published industry-standard set; the `category`, `appealable` and `action` fields are OUR classification, not part of the standard. VERIFY the full current list against the official X12 CARC/RARC publication before the first paid client delivery. Any code not present here is classified `unknown` and is reported as unknown rather than guessed.",
+  "codes": {
+    "4":   { "meaning": "Procedure code inconsistent with the modifier used, or a required modifier is missing", "category": "coding", "appealable": true,  "action": "corrected_resubmission" },
+    "11":  { "meaning": "Diagnosis inconsistent with the procedure", "category": "coding", "appealable": true, "action": "corrected_resubmission" },
+    "16":  { "meaning": "Claim lacks information or has submission/billing error", "category": "administrative", "appealable": true, "action": "corrected_resubmission" },
+    "18":  { "meaning": "Exact duplicate claim or service", "category": "duplicate", "appealable": false, "action": "no_action" },
+    "22":  { "meaning": "Care may be covered by another payer per coordination of benefits", "category": "eligibility", "appealable": true, "action": "appeal" },
+    "27":  { "meaning": "Expenses incurred after coverage terminated", "category": "eligibility", "appealable": true, "action": "appeal" },
+    "29":  { "meaning": "Time limit for filing has expired", "category": "timely_filing", "appealable": true, "action": "appeal_with_proof_of_timely_submission" },
+    "45":  { "meaning": "Charge exceeds fee schedule or contracted maximum", "category": "contractual", "appealable": false, "action": "no_action" },
+    "50":  { "meaning": "Non-covered — payer does not deem the service medically necessary", "category": "medical_necessity", "appealable": true, "action": "appeal" },
+    "96":  { "meaning": "Non-covered charge(s)", "category": "coverage", "appealable": true, "action": "appeal" },
+    "97":  { "meaning": "Benefit for this service is included in the payment for another service already adjudicated", "category": "bundling", "appealable": true, "action": "appeal" },
+    "109": { "meaning": "Claim not covered by this payer or contractor — send to the correct payer", "category": "routing", "appealable": true, "action": "corrected_resubmission" },
+    "151": { "meaning": "Payment adjusted because the payer deems the information submitted does not support this many services", "category": "medical_necessity", "appealable": true, "action": "appeal" },
+    "197": { "meaning": "Precertification, authorisation or notification absent", "category": "authorisation", "appealable": true, "action": "appeal" },
+    "B7":  { "meaning": "Provider was not certified or eligible to be paid for this procedure on this date of service", "category": "credentialing", "appealable": true, "action": "appeal" },
+    "1":   { "meaning": "Deductible amount — patient responsibility", "category": "patient_responsibility", "appealable": false, "action": "no_action" },
+    "2":   { "meaning": "Coinsurance amount — patient responsibility", "category": "patient_responsibility", "appealable": false, "action": "no_action" },
+    "3":   { "meaning": "Copayment amount — patient responsibility", "category": "patient_responsibility", "appealable": false, "action": "no_action" }
+  }
+}

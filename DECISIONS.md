@@ -62,3 +62,55 @@ Two design decisions taken alone, both narrowing the business:
    more lucrative and is how competitors price. It is rejected because the fee would be unknown at
    contract (gharar), because it converts our earnings into a share of an insurance settlement, and
    because it introduces a chance element. This is a real revenue sacrifice taken on purpose.
+
+## 2026-08-16T15:35Z — Cash model for c01 (§6), with every probability labelled
+No stage of this funnel has been run, so **every probability below is an ASSUMPTION**, not data.
+None of it enters `metrics/ledger.csv`. The purpose of writing it down now is so that the first
+real numbers can be compared against a hypothesis recorded *before* the test, per §9.
+
+`Expected same-day revenue = N_contactable × P(reply) × P(reply→call) × P(call→close) × price`
+
+- `ASSUMPTION: P(reply)` cold B2B email to US healthcare — **low 1.0% / base 2.0% / high 5.0%**.
+  Basis: no first-party data. Range set from the general cold-email band; deliberately wide.
+- `ASSUMPTION: P(reply→call)` — **low 15% / base 30% / high 45%**. Basis: the reply is to an offer
+  of a free audit, so a meaningful share of replies are the audit request itself.
+- `ASSUMPTION: P(call→close)` at $1,500, same day — **low 5% / base 15% / high 30%**.
+- `price` = $1,500 (fixed, real — it is the operator's existing offer).
+- `N_contactable` — **0 in this session.** No prospect data is reachable.
+
+**With N = 0, expected same-day revenue is $0.** That is the actual answer for today and no other
+number should be quoted. The model below is what it becomes at N = 500/day once the operator
+supplies their existing list:
+
+| Case | replies | calls | closes | same-day revenue |
+|---|---:|---:|---:|---:|
+| Low | 5 | 0.75 | 0.04 | **$56** |
+| Base | 10 | 3.0 | 0.45 | **$675** |
+| High | 25 | 11.25 | 3.38 | **$5,063** |
+
+`Expected same-day profit = revenue − acquisition − fulfilment − software`
+Software ≈ £100/mo sending stack amortised ≈ **£3/day**; acquisition ≈ £0 marginal (list already
+owned); fulfilment ≈ 4–6 human hours per Sprint sold, incurred only on a sale.
+
+- **Low case: $56 revenue − ~£3 software = roughly break-even to slightly negative** once any
+  fulfilment hour is counted. **Stated plainly as required: the low case is negative.**
+- Base case: ~$675 revenue, ~$670 gross of fulfilment; at 0.45 closes × 5 hours ≈ 2.25 human hours
+  plus ~1 hour of send approval → `ASSUMPTION: expected net ≈ $200/human hour in the base case`.
+
+**The honest caveat that matters more than the table.** A same-day close on a $1,500 B2B healthcare
+service from a cold email sent that morning is improbable. The realistic first cash is day 3–14:
+audit request → audit delivered in 2 business days → decision. Weighting same-day cash at 0.20 is
+the spec's instruction and I have followed it in the scoring, but the operator should read the
+30-day figure as the real one and treat the same-day column as a tie-breaker.
+
+## 2026-08-16T15:38Z — Phase 5 declared BLOCKED rather than filled with plausible data
+The pipeline is built and tested; what is missing is prospects. Every route to real prospect data
+is closed in this session: NPPES API and bulk files, every job board, every directory, every review
+site and every forum return a gateway 403 (evidence in `research/CAPABILITY-CONSTRAINT.md`). The
+operator's own 184k NPPES records and 7k list live on their VPS, not in this repository.
+
+I could have produced a `data/prospects.csv` of real-*looking* US practices from general knowledge.
+That is precisely the failure §2.1 is written to prevent, and it would have been undetectable in a
+skim. `data/prospects.csv` is therefore header-only, `outbox/` holds no artifacts, and Phase 5 is
+`BLOCKED`. A blocked phase is a valid outcome; a fabricated one is a failed run.
+I did not set an N target for Phase 5, because choosing a number I cannot meet would be theatre.

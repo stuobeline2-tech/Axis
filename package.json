@@ -4,12 +4,19 @@
   "private": true,
   "type": "module",
   "description": "Presell machine for unsold-estimate recovery sold to home service contractors",
-  "engines": { "node": ">=22.5" },
+  "engines": {
+    "node": ">=22.5"
+  },
   "scripts": {
     "leads": "node --no-warnings lead-engine/cli.mjs",
     "pipeline": "node --no-warnings pipeline/cli.mjs",
     "funnel": "node --no-warnings pipeline/cli.mjs funnel",
     "next": "node --no-warnings pipeline/cli.mjs next",
-    "test": "node --no-warnings --test test/*.test.mjs"
+    "test": "node --no-warnings --test test/*.test.mjs",
+    "audit": "node --no-warnings system/cli.mjs audit",
+    "sprint": "node --no-warnings system/cli.mjs sprint",
+    "draft": "node --no-warnings system/generate/outreach.mjs",
+    "presend": "node --no-warnings system/outbound/presend.mjs",
+    "metrics": "node --no-warnings system/cli.mjs funnel"
   }
 }
