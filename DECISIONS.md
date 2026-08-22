@@ -167,3 +167,23 @@ only executing the chain end to end exposed that.
   that rule exists to prevent.
 - **The compiled 71-taxonomy set** is on the VPS. 39 reconstructed codes ship with a loud warning
   and a one-command validator rather than 32 invented codes padding the count.
+
+## 2026-08-16T18:05Z — Instantly transport: reconstructed endpoint shapes, gated dry-run default
+Operator confirmed they hold an Instantly Growth subscription and asked to wire the transport.
+`developer.instantly.ai` is egress-blocked in this environment (WebFetch returned
+EGRESS_BLOCKED); the endpoint shapes in `transport_instantly.py` (`POST /emails`,
+`POST /emails/reply`, `GET /accounts`, Bearer auth, `eaccount`/`to_address`/`reply_to_uuid`
+field names) come from WebSearch snippets of Instantly's own changelog/help articles — a lower
+confidence source than reading the docs directly. This is stated in the module docstring, not
+left implicit. `verify_connection()` makes one real, harmless GET before any send is attempted,
+so a wrong field name surfaces on that call or on the first real send's logged raw response body,
+rather than failing silently mid-batch or being discovered by a bounced campaign.
+
+No API key exists in this session and no real prospect exists in `data/prospects.csv`, so no real
+send was attempted or could be. All 16 transport tests mock `requests.Session.request` and never
+touch the network. Design choices made without being asked, each recorded here rather than
+silently assumed: default is dry-run, `--send` is required and re-runs the JS pre-send gate
+immediately before transmission (state may have changed since it last ran), a reply-step refuses
+to fabricate a new thread when no prior thread was recorded, a failed send is never written to
+the ledger, and SEQUENCE_6 resolves to its own configured mailbox per the brief's "different
+sending domain" instruction rather than falling back to the default account silently.

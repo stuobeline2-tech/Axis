@@ -5,7 +5,7 @@ Independent mental health practices in TX / FL / GA. The pipeline's only success
 no prices quoted, no closing.
 
 ```bash
-pip install aiohttp dnspython
+pip install aiohttp dnspython requests
 
 export AXISBRIDGE_POSTAL_ADDRESS="<real postal address>"   # CAN-SPAM, no default
 export AXISBRIDGE_PRIVACY_URL="https://www.axisbridgemedical.com/privacy"
@@ -17,8 +17,47 @@ python -m axisbridge.outreach_engine --check-claims        # exits 1 while anyth
 python -m axisbridge.outreach_engine --export-prospects data/prospects.csv
 node system/outbound/presend.mjs --outbox outbox/          # checks 1-13
 #   then a human reads the batch — check 14, the Send gate
+
+# --- transport (Instantly) ---
+export INSTANTLY_API_KEY="..."                              # Settings > API in Instantly, v2 key
+export AXISBRIDGE_INSTANTLY_EACCOUNT="anthony@axisbridgemedical.com"
+export AXISBRIDGE_INSTANTLY_EACCOUNT_SEQ6="anthony@<a different domain>"   # SEQUENCE_6 only
+
+python -m axisbridge.transport_instantly --verify-connection    # one real, harmless GET — do this first
+python -m axisbridge.transport_instantly --outbox outbox/       # DRY RUN by default, no network call
+python -m axisbridge.transport_instantly --outbox outbox/ --send --limit 20   # the actual Send gate
+
 python -m axisbridge.inbox_monitor --sla                   # escalations past 2 hours
 ```
+
+## Transport (`transport_instantly.py`)
+
+**Endpoint shapes are reconstructed from search snippets, not read from live docs** —
+`developer.instantly.ai` was egress-blocked in the session that wrote this. Field names
+believed correct: `eaccount`, `to_address`, `subject`, `body{html,text}`, `campaign_id`
+(nullable), `reply_to_uuid`; Bearer auth. **Run `--verify-connection` before the first
+batch** — one real, harmless `GET /accounts` call that surfaces a wrong field name
+immediately instead of failing silently mid-batch. Confirm against Instantly's own docs
+before volume.
+
+This pipeline owns sequencing — day offsets, the claims gate, the four-slot scarcity
+gate, thread linkage. Instantly is used purely as a send transport for an
+already-rendered, already-gated message, never as its own campaign automation:
+uploading leads into an Instantly campaign would let Instantly's step engine fire
+follow-ups that never passed the claims gate.
+
+Defaults to **dry run** — `--send` is required for a real transmission, and even then it
+re-runs the JS pre-send gate immediately beforehand (the outbox may have changed since
+it last ran) unless `--skip-gate` is explicitly passed. A reply-step artifact refuses to
+send if no thread was recorded for that prospect+sequence — it will not silently start a
+new thread. A failed API call is logged and left in `outbox/`, never moved to `sent/`,
+never written to `metrics/ledger.csv` — only a confirmed 2xx produces a ledger row.
+SEQUENCE_6 sends from its own configured mailbox, per the brief's "different sending
+domain" instruction.
+
+`tests/test_transport_instantly.py` (16 tests) never calls the real API — `requests`
+is mocked at the transport boundary throughout, since no API key or real prospect
+exists in this environment to test against.
 
 ## Four things that will stop you, on purpose
 
