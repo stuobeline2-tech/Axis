@@ -245,3 +245,42 @@ test('singular claim counts read as "1 claim", not "1 claims"', () => {
                            asOf: '2026-08-16', preparedBy: 'test' });
   assert.doesNotMatch(md, /\b1 claims\b/);
 });
+
+test('check 9 fires on outcome claims about us or our clients', () => {
+  for (const claim of ['We recovered 40% for clients.', 'Our clients typically recover $8,000.',
+                       'clients typically see $4,000 back', '$12,000 recovered last quarter',
+                       'a success rate of 92%']) {
+    const r = gateFixture({ to: 'doc@example.invalid', subject: 'S', body: GOOD_BODY + '\n' + claim },
+      { prospect: GOOD_PROSPECT });
+    assert.ok(r.problems.some(p => /check 9/.test(p)), `should flag: ${claim}`);
+  }
+});
+
+test("check 9 does NOT fire on the prospect's own illustrative figures", () => {
+  for (const line of ['even a 5% denial rate is real money',
+                      'If your billing company takes 6% and you collect $80,000 a month',
+                      'A biller at $43,000 salary costs roughly $76,500 a year']) {
+    const r = gateFixture({ to: 'doc@example.invalid', subject: 'S', body: GOOD_BODY + '\n' + line },
+      { prospect: GOOD_PROSPECT });
+    assert.ok(!r.problems.some(p => /check 9/.test(p)), `should not flag: ${line}`);
+  }
+});
+
+test('check 9 does not block offer language about what the prospect keeps', () => {
+  for (const line of ['You keep everything we recover.',
+                      'My biller works them. You keep every dollar we recover.',
+                      '90 days of denied claims worked free, you keep the recoveries.']) {
+    const r = gateFixture({ to: 'doc@example.invalid', subject: 'S', body: GOOD_BODY + '\n' + line },
+      { prospect: GOOD_PROSPECT });
+    assert.ok(!r.problems.some(p => /check 9/.test(p)), `should not flag: ${line}`);
+  }
+});
+
+test('check 9 still blocks past-tense results claims', () => {
+  for (const line of ['We recovered $8,000 for a practice in Austin.',
+                      'We typically recover four thousand per practice.']) {
+    const r = gateFixture({ to: 'doc@example.invalid', subject: 'S', body: GOOD_BODY + '\n' + line },
+      { prospect: GOOD_PROSPECT });
+    assert.ok(r.problems.some(p => /check 9/.test(p)), `should flag: ${line}`);
+  }
+});

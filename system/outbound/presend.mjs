@@ -13,8 +13,23 @@ export const REQUIRED_SENDER = {
 };
 const PLACEHOLDERS = [/\{\{/, /\bTODO\b/, /\bXXX\b/, /lorem ipsum/i, /\[insert/i, /<name>/i];
 const DECEPTIVE_SUBJECT = [/^\s*re:/i, /^\s*fwd:/i, /^\s*fw:/i];
-// Any performance claim must carry a source marker "[src: …]" naming where it came from.
-const PERF_CLAIM = /(\b\d{1,3}(\.\d+)?\s?%|\$\s?\d[\d,]*(\.\d+)?\s*(recovered|in recoveries|back)|\bwe (?:recovered|recover|have recovered)\b|\bclients? (?:typically|average|see)\b)/i;
+// A performance claim must carry a source marker "[src: …]".
+// Scoped to claims about OUTCOMES — ours or our clients'. An earlier version matched any
+// percentage at all, which fired on the prospect's own figures ("even a 5% denial rate",
+// "if your billing company takes 6%"). Those are illustrative, not performance claims, and
+// blocking them taught nothing. Substantive per-claim truthfulness is enforced upstream by
+// axisbridge/claims_register.json; this is the backstop for copy that never went through it.
+const PERF_CLAIM = new RegExp([
+  // Past tense only. "everything we recover" is offer language describing what the
+  // PROSPECT keeps, not a claim about results we have produced — it must not be blocked.
+  String.raw`\bwe (?:recovered|collected|have recovered|have collected)\b`,
+  String.raw`\bwe (?:typically|usually|average|consistently) (?:recover|collect|find)\b`,
+  String.raw`\bour clients? (?:recover|see|average|typically|get)\b`,
+  String.raw`\bclients? (?:typically|average|usually) (?:recover|see|get)\b`,
+  String.raw`\$\s?\d[\d,]*(?:\.\d+)?\s*(?:recovered|in recoveries|back|returned)\b`,
+  String.raw`\b\d{1,3}(?:\.\d+)?\s?%\s*(?:of (?:our|their) )?(?:recovery|recovered|success|increase|uplift|more)\b`,
+  String.raw`\b(?:results?|success rate|recovery rate) of \d`,
+].join('|'), 'i');
 const SOURCE_MARKER = /\[src:[^\]]+\]/i;
 
 export function checkArtifact(a, ctx) {

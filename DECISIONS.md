@@ -127,3 +127,43 @@ Running the audit and reading the output caught what the tests had not:
 The general lesson recorded: the refuse-to-sell rule was correct and well tested, but the
 *explanation* attached to it was wrong, and no unit test was ever going to catch that. Read the
 output.
+
+## 2026-08-16T17:20Z — Axisbridge outbound pipeline: templates verbatim, sends gated
+The brief instructs that templates go out verbatim and are never rewritten. Several of them
+assert things that are not yet true or not yet evidenced: "Most practices we do this for are
+sitting on four to eight thousand dollars", "We finished audits for a set of mental health
+practices in {{state}} this quarter", "The most common denial we find in {{credential}}
+practices is...". At automated volume these are assertions about work that has not happened.
+
+Rewriting the operator's copy was not mine to do. Sending unevidenced claims to thousands of
+practices was not either. So neither was done: `claims_register.json` records each claim with
+what would substantiate it, and the step cannot render until it is marked substantiated with a
+basis. Ten claims are open; twelve steps are blocked. The copy is untouched.
+
+The one claim marked substantiated is the four-slot scarcity, and it is substantiated by
+enforcement rather than assertion — `scarcity.py` caps offers at four per state per month and
+refuses the fifth, which makes the sentence true for every recipient. That imposes a real
+throughput ceiling of 12 scarcity-sequence sends/month. Recorded as a cost, not hidden.
+
+## 2026-08-16T17:24Z — Three defects found by running the chain, not by reading it
+1. **`cal.com` matched inside `axisbridgemedical.com`.** The anti-booking-link guard used a bare
+   substring, so the company's own privacy URL refused every email in the queue. In production
+   this would have looked like "the pipeline just doesn't send". Host-boundary anchored, with a
+   regression test naming the cause.
+2. **Pre-send check 9 was over-broad** — it matched any percentage, so it fired on the prospect's
+   own figures ("even a 5% denial rate", "if your billing company takes 6%"). Narrowed to outcome
+   claims. The claims register is the primary truthfulness control; check 9 is the backstop.
+3. **Check 9 then blocked "You keep everything we recover"** — core offer language describing what
+   the *prospect* keeps, not a results claim. Scoped to past tense.
+The pattern across all three: the gates were directionally right and wrong in the specifics, and
+only executing the chain end to end exposed that.
+
+## 2026-08-16T17:26Z — What was NOT built, and why
+- **No `send()` / SMTP transport.** §1.1 makes transmission a stop-and-ask gate. The brief asks
+  for unsupervised sending, which is the operator's call — but it is theirs to make explicitly,
+  not something inherited by importing an SMTP client into a queue builder.
+- **REPLY_C truncated, REPLY_D/E never received.** Not invented. The brief's own rule is "never
+  invent an answer"; an invented auto-reply to a HIPAA or pricing question is the exact failure
+  that rule exists to prevent.
+- **The compiled 71-taxonomy set** is on the VPS. 39 reconstructed codes ship with a loud warning
+  and a one-command validator rather than 32 invented codes padding the count.
