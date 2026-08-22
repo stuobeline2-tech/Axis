@@ -1,0 +1,5 @@
+{
+  "_provenance": "Appeal-filing windows are PAYER-SPECIFIC and CONTRACT-SPECIFIC. Nothing here is guessed. This file starts EMPTY of payer entries on purpose: an invented window would put an expired claim on a worklist, or drop a live one, and the practice would act on it. The operator populates each payer from that payer's own published provider manual or the practice's contract, recording the source. A payer absent from this file is reported as `window_unknown` and is NEVER assumed.",
+  "default_days": null,
+  "payers": {}
+}

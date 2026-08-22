@@ -1,5 +1,29 @@
 # Axis
 
+> **This repository now holds two things.** Read this first.
+>
+> **1. The revenue engine (current).** Built under the autonomous operating spec: 23 scored
+> candidates, a Shariah and legal screen that killed four of them, a selected offer, and a
+> working, tested pipeline. Start at **[`STATE.md`](STATE.md)**, then
+> [`DECISIONS.md`](DECISIONS.md), [`offer/offer.md`](offer/offer.md), [`system/`](system/).
+> Selected candidate: **denial recovery for US independent practices** (`c01`).
+>
+> **2. The earlier presell machine (retained, not selected).** Everything below this box —
+> `roi-calculator/`, `lead-engine/`, `pipeline/`, `outreach/`, `delivery/` — is a prior build
+> targeting US home-service contractors. It was re-entered as candidate **`c03`** and scored
+> **5.95 against the winner's 6.80** (`research/scoring.csv`). It is kept because it is real,
+> tested work and the second-best candidate in its category; it is not the current engine.
+>
+> ```bash
+> npm test                                                    # 34 tests (9 legacy + 25 new)
+> npm run audit -- --in <claims.csv> --practice "Name"        # the current deliverable
+> npm run presend                                             # the Send gate, as an executable
+> ```
+
+---
+
+# Axis — presell machine (candidate c03, not selected)
+
 Presell machine for a single offer: **recovering unsold estimates for home service contractors.**
 
 Target: **$250/day** ($7,500/mo) through **8 retained clients at $1,000/mo**. Eight customers,

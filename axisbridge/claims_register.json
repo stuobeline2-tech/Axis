@@ -1,0 +1,122 @@
+{
+  "_purpose": "Every factual or results claim that appears in outbound copy. A sequence CANNOT send while any claim it contains is unsubstantiated. This exists because the brief says templates go out verbatim, and several of them assert things that are either not yet true or not yet evidenced. Rewriting the operator's copy was not mine to do; sending an unevidenced claim to thousands of practices was not either. So the copy is untouched and the send is gated.",
+  "_howto": "Set substantiated=true and fill basis with where the claim comes from. Basis must be a real source, a real logged outcome, or a real operational fact. 'It feels right' is not a basis. Re-run: python -m axisbridge.outreach_engine --check-claims",
+  "claims": {
+    "audit_slots_four_per_state_month": {
+      "text": "I am doing four free denial audits in {{state}} this month / Two of this month's four audit slots are gone / I am running four more free audits this month",
+      "appears_in": [
+        "SEQUENCE_1.1",
+        "SEQUENCE_1.4",
+        "SEQUENCE_3.1",
+        "SEQUENCE_6.1"
+      ],
+      "type": "scarcity",
+      "substantiated": true,
+      "basis": "Made true by enforcement rather than by assertion: axisbridge/scarcity.py caps outreach at 4 audit offers per state per calendar month and refuses to render a 5th. The claim is literally true for every recipient who receives it.",
+      "note": "If the cap is raised above 4, this copy becomes false and the gate must be reopened."
+    },
+    "most_practices_sitting_on_4_to_8k": {
+      "text": "Most practices we do this for are sitting on four to eight thousand dollars they already wrote off.",
+      "appears_in": [
+        "SEQUENCE_1.1"
+      ],
+      "type": "own_results",
+      "substantiated": false,
+      "basis": "",
+      "required": "A count of audits Axisbridge has actually delivered, and the distribution of recoverable totals found. 'Most' requires >50% of a real sample. metrics/ledger.csv currently holds zero delivered audits."
+    },
+    "most_common_denial_by_credential": {
+      "text": "The most common denial we find in {{credential}} practices is {{denial_reason}}.",
+      "appears_in": [
+        "SEQUENCE_1.2"
+      ],
+      "type": "own_findings",
+      "substantiated": false,
+      "basis": "",
+      "required": "Denial-code frequency from audits actually run, broken down by credential. Says 'we find' \u2014 that is a claim about Axisbridge's own casework, not an industry statistic."
+    },
+    "payer_filing_window_90_or_180": {
+      "text": "With {{payer}} it is often 90 or 180 days from date of service.",
+      "appears_in": [
+        "SEQUENCE_2.2"
+      ],
+      "type": "payer_policy",
+      "substantiated": false,
+      "basis": "",
+      "required": "The actual filing window for each of the 9 named payers, cited to that payer's current provider manual. This is the same gap already flagged in system/config/payer-windows.json \u2014 a wrong window sends a practice chasing dead claims."
+    },
+    "quarterly_audits_pattern": {
+      "text": "We finished audits for a set of mental health practices in {{state}} this quarter. One pattern showed up in nearly all of them.",
+      "appears_in": [
+        "SEQUENCE_6.1"
+      ],
+      "type": "own_results",
+      "substantiated": false,
+      "basis": "",
+      "required": "Audits actually completed in that state in that quarter, and a denial pattern actually present in most of them. This is the strongest factual assertion in the whole book \u2014 it describes completed work. Sending it before the work exists is a fabricated case study."
+    },
+    "weekly_denial_check_habit": {
+      "text": "The practices that had the least money sitting in denials all had one habit in common. Somebody checked the denial report every single week.",
+      "appears_in": [
+        "SEQUENCE_6.2"
+      ],
+      "type": "own_results",
+      "substantiated": false,
+      "basis": "",
+      "required": "A real comparison across audited practices. 'All had one habit in common' is a strong universal claim about a sample that must exist."
+    },
+    "loaded_cost_76500": {
+      "text": "A biller at $43,000 salary costs roughly $76,500 a year once you add payroll tax, benefits, recruitment and the turnover that hits about every eighteen months.",
+      "appears_in": [
+        "SEQUENCE_4.2"
+      ],
+      "type": "market_figure",
+      "substantiated": false,
+      "basis": "",
+      "required": "The build-up for the 1.78x multiplier, and a source for the $43,000 base and the 18-month turnover figure. This is the easiest one to substantiate \u2014 it is public market data, not own-results."
+    },
+    "biller_live_in_seven_days": {
+      "text": "Mine start in about seven days, inside your own system, on your hours.",
+      "appears_in": [
+        "SEQUENCE_4.1",
+        "SEQUENCE_1.4",
+        "SEQUENCE_4.3"
+      ],
+      "type": "capability",
+      "substantiated": false,
+      "basis": "",
+      "required": "Confirmation that a trained biller can in fact be placed and live in 7 days from agreement, with bench depth to honour it at outreach volume. This is a delivery promise made to every recipient."
+    },
+    "named_backup_biller_from_day_one": {
+      "text": "Every placement I make comes with a second trained biller assigned to that practice from day one. Not a promise to find cover \u2014 an actual named person who already knows the account.",
+      "appears_in": [
+        "SEQUENCE_4.3",
+        "SEQUENCE_5.2"
+      ],
+      "type": "capability",
+      "substantiated": false,
+      "basis": "",
+      "required": "That a named second biller genuinely exists per placement. The copy explicitly distinguishes itself from 'a promise to find cover', so it must be operationally real, not aspirational."
+    },
+    "hhs_permits_offshore_ba": {
+      "text": "HHS permits offshore business associates where the BAA is in place.",
+      "appears_in": [
+        "REPLY_B"
+      ],
+      "type": "legal",
+      "substantiated": false,
+      "basis": "",
+      "required": "A citation to HHS/OCR guidance. Broadly consistent with HIPAA (which does not prohibit offshore BAs) but this is a legal assurance sent to a covered entity by an automated system \u2014 it needs a source, and ideally counsel sign-off, before it auto-sends."
+    },
+    "largest_share_of_denials_eligibility": {
+      "text": "That single change [verifying eligibility every session] stops the largest share of denials I see in practices your size.",
+      "appears_in": [
+        "SEQUENCE_2.4"
+      ],
+      "type": "own_findings",
+      "substantiated": false,
+      "basis": "",
+      "required": "Denial-cause frequency across audits actually run. 'The largest share' is a ranking claim and needs a real denominator."
+    }
+  }
+}
